@@ -18,7 +18,7 @@ namespace FoodProject.Data.Repository
 
         Entity GetById(int id);
 
-        void SaveChanges();
+       
 
 
     }
