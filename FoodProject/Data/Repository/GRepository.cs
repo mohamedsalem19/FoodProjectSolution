@@ -76,10 +76,7 @@ namespace FoodProject.Data.Repository
             return Get(x => x.Id == id).FirstOrDefault();
         }
 
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
-        }
+       
 
 
     }
