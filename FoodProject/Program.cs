@@ -1,6 +1,16 @@
 
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
+using FoodProject.Config;
 using FoodProject.Data;
 using FoodProject.Midllwares;
+using FoodProject.Models;
+using FoodProject.Services;
+using FoodProject.ViewModels;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodProject
@@ -23,8 +33,35 @@ namespace FoodProject
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
             });
+            builder.Services.AddIdentity<UserApplication, IdentityRole>().AddEntityFrameworkStores<Context>();
+            builder.Services.AddAutoMapper(typeof(CategoryProfile).Assembly);
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureContainer<ContainerBuilder>(container =>
+            {
+                container.RegisterModule(new AutoFacModule());
+            });
+            builder.Services.AddResponseCompression(opt =>
+            {
+                opt.EnableForHttps = true;
+                opt.Providers.Add<GzipCompressionProvider>();
+                opt.Providers.Add<BrotliCompressionProvider>();
+            });
+
+            builder.Services.Configure<GzipCompressionProviderOptions>(opt =>
+            {
+                opt.Level = System.IO.Compression.CompressionLevel.Fastest;
+            });
+
+            builder.Services.Configure<BrotliCompressionProviderOptions>(opt =>
+            {
+                opt.Level = System.IO.Compression.CompressionLevel.Optimal;
+            });
+            builder.Services.AddMediatR(typeof(Program).Assembly);
 
             var app = builder.Build();
+
+            app.UseResponseCompression();
+            AutoMapperService.Mapper = app.Services.GetService<IMapper>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
