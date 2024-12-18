@@ -1,17 +1,7 @@
 ﻿using FoodProject.Data;
 using FoodProject.Data.Repository;
 using FoodProject.Models;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Talabat.Core;
-using Talabat.Core.Entities;
-using Talabat.Core.Repositories;
-using Talabat.Repsitory.Data;
-using Talabat.Repsitory.Repositories;
 
 namespace FoodProject.UnitOfWork
 {
@@ -29,7 +19,7 @@ namespace FoodProject.UnitOfWork
 
         public async Task<int> CompleteAsync()
         {
-           return await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
 
         public async ValueTask DisposeAsync()
@@ -43,10 +33,10 @@ namespace FoodProject.UnitOfWork
             if (!repoistories.ContainsKey(key))
             {
                 var repository = new GRepository<TEntity>(_dbContext);
-                repoistories.Add(key, repository); 
+                repoistories.Add(key, repository);
             }
-            return repoistories[key] as IGRepository<TEntity>  ;
-           
+            return repoistories[key] as IGRepository<TEntity>;
+
         }
     }
 }

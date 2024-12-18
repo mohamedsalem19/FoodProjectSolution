@@ -12,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace FoodProject
 {
@@ -30,7 +31,10 @@ namespace FoodProject
 
             builder.Services.AddDbContext<Context>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .LogTo(log => Debug.WriteLine(log), LogLevel.Information)
+                .EnableSensitiveDataLogging();
 
             });
             builder.Services.AddIdentity<UserApplication, IdentityRole>().AddEntityFrameworkStores<Context>();
